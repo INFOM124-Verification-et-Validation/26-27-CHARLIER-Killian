@@ -47,9 +47,9 @@ public class PinkyTest {
 
         Level currentLevel = ghostMapParser.parseMap(map);
         currentLevel.registerPlayer(player);
-        Pinky blinky = Navigation.findUnitInBoard(Pinky.class, currentLevel.getBoard());
+        Pinky pinky = Navigation.findUnitInBoard(Pinky.class, currentLevel.getBoard());
 
-        Optional<Direction> aiDirection = blinky.nextAiMove();
+        Optional<Direction> aiDirection = pinky.nextAiMove();
 
         assertThat(aiDirection.get()).isEqualTo(Direction.SOUTH);
     }
