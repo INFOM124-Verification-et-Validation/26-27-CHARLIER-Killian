@@ -143,5 +143,65 @@ public class ClydeTest {
         assertThat(aiDirection.get()).isIn(new Direction[]{Direction.NORTH, Direction.WEST});
     }
 
+    @Test
+    public void testClydeFarWithPlayerTrapped() {
+        List<String> map = new ArrayList<>();
+        map.add("###########");
+        map.add("#P#       #");
+        map.add("##   #    #");
+        map.add("#    #    #");
+        map.add("#         #");
+        map.add("#        C#");
+        map.add("###########");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        currentLevel.registerPlayer(player);
+        Clyde clyde = Navigation.findUnitInBoard(Clyde.class, currentLevel.getBoard());
+
+        Optional<Direction> aiDirection = clyde.nextAiMove();
+
+        assertThat(aiDirection.get()).isIn(new Direction[]{Direction.NORTH, Direction.WEST});
+    }
+
+    @Test
+    public void testClydeNearWithPlayerTrapped() {
+        List<String> map = new ArrayList<>();
+        map.add("###########");
+        map.add("#P#C      #");
+        map.add("##   #    #");
+        map.add("#    #    #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("###########");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        currentLevel.registerPlayer(player);
+        Clyde clyde = Navigation.findUnitInBoard(Clyde.class, currentLevel.getBoard());
+
+        Optional<Direction> aiDirection = clyde.nextAiMove();
+
+        assertThat(aiDirection.get()).isIn(new Direction[]{Direction.SOUTH, Direction.EAST});
+    }
+
+    @Test
+    public void testClydeTrapped() {
+        List<String> map = new ArrayList<>();
+        map.add("###########");
+        map.add("#P        #");
+        map.add("#    #    #");
+        map.add("#    #    #");
+        map.add("#        ##");
+        map.add("#       #C#");
+        map.add("###########");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        currentLevel.registerPlayer(player);
+        Clyde clyde = Navigation.findUnitInBoard(Clyde.class, currentLevel.getBoard());
+
+        Optional<Direction> aiDirection = clyde.nextAiMove();
+
+        assertThat(aiDirection.isEmpty()).isTrue();
+    }
+
     // Une partition détermine les comportements similaires
 }
