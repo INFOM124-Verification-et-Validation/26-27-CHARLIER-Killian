@@ -109,16 +109,15 @@ public class Clyde extends Ghost {
         if (path != null && !path.isEmpty()) {
             Direction direction = path.get(0);
             if (path.size() <= SHYNESS) {
-                for (Direction dir : path) {
-                    if (!this.getSquare().getSquareAt(OPPOSITES.get(dir)).isAccessibleTo(this)) {
-                        path.remove(dir);
-                    }
-                }
-
-                if (path.isEmpty()) {
-                    return Optional.empty();
-                }
-
+//                for (Direction dir : path) {
+//                    if (!this.getSquare().getSquareAt(OPPOSITES.get(dir)).isAccessibleTo(this)) {
+//                        path.remove(dir);
+//                    }
+//                }
+//
+//                if (path.isEmpty()) {
+//                    return Optional.empty();
+//                }
                 return Optional.ofNullable(OPPOSITES.get(direction));
             }
             return Optional.of(direction);
