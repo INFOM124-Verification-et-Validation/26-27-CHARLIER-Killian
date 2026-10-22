@@ -234,4 +234,27 @@ public class InkyTest {
 
         assertThat(aiDirection.get()).isEqualTo(Direction.WEST);
     }
+
+    @Test
+    public void testInkywithLargerMap() {
+        List<String> map = new ArrayList<>();
+        map.add("################");
+        map.add("#  #           #");
+        map.add("#  P  ### ### ##");
+        map.add("#  #  ##   #   #");
+        map.add("#        # ##  #");
+        map.add("#  #    ##     #");
+        map.add("# ##   #####  ##");
+        map.add("# ##     ###  ##");
+        map.add("#     B       I#");
+        map.add("################");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        currentLevel.registerPlayer(player);
+        Inky inky = Navigation.findUnitInBoard(Inky.class, currentLevel.getBoard());
+
+        Optional<Direction> aiDirection = inky.nextAiMove();
+
+        assertThat(aiDirection.get()).isEqualTo(Direction.WEST);
+    }
 }
