@@ -2,19 +2,18 @@ package nl.tudelft.jpacman.npc.ghost;
 
 import nl.tudelft.jpacman.board.BoardFactory;
 import nl.tudelft.jpacman.board.Direction;
-import nl.tudelft.jpacman.level.Level;
-import nl.tudelft.jpacman.level.LevelFactory;
-import nl.tudelft.jpacman.level.Player;
-import nl.tudelft.jpacman.level.PlayerFactory;
+import nl.tudelft.jpacman.level.*;
 import nl.tudelft.jpacman.sprite.PacManSprites;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Neroan
@@ -26,6 +25,8 @@ public class ClydeTest {
     BoardFactory boardFactory;
     GhostMapParser ghostMapParser;
     Player player;
+    MapParser mapParser;
+    PlayerFactory playerFactory;
 
     /**
      * @BeforeEach should work the same as @Before
@@ -37,6 +38,8 @@ public class ClydeTest {
         this.levelFactory = new LevelFactory(sprites, ghostFactory);
         this.boardFactory = new BoardFactory(sprites);
         this.ghostMapParser = new GhostMapParser(levelFactory, boardFactory, ghostFactory);
+        this.mapParser = new GhostMapParser(levelFactory, boardFactory, ghostFactory);
+        this.playerFactory = new PlayerFactory(sprites);
         player = new PlayerFactory(sprites).createPacMan();
     }
 
@@ -203,18 +206,9 @@ public class ClydeTest {
         assertThat(aiDirection.isEmpty()).isTrue();
     }
 
-class ClydeTestBis {
-    PacManSprites sprites = new PacManSprites();
-    GhostFactory ghostFactory = new GhostFactory(sprites);
-    LevelFactory levelFactory = new LevelFactory(sprites, ghostFactory);
-    BoardFactory boardFactory = new BoardFactory(sprites);
-    public MapParser mapParser = new GhostMapParser(levelFactory, boardFactory, ghostFactory);
-    public PlayerFactory playerFactory = new PlayerFactory(sprites);
-
-
     // T1
     @Test
-    void clydeShouldGoAwayFromPacmanWhenCloseTest() {
+    public void clydeShouldGoAwayFromPacmanWhenCloseTest() {
         List<String> map = Arrays.asList(
             "############",
             "#P      C  #",
@@ -236,7 +230,7 @@ class ClydeTestBis {
 
     // T2
     @Test
-    void clydeShouldNotMoveTest() {
+    public void clydeShouldNotMoveTest() {
         List<String> map = Arrays.asList(
             "############",
             "#P      #C##",
@@ -257,7 +251,7 @@ class ClydeTestBis {
 
     // T4
     @Test
-    void clydeShouldGetCloserToPacManWhenFarTest() {
+    public void clydeShouldGetCloserToPacManWhenFarTest() {
         List<String> map = Arrays.asList(
             "############",
             "#P        C#",
