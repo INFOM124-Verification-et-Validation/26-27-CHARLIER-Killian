@@ -91,4 +91,8 @@ public class Board {
     public boolean withinBorders(int x, int y) {
         return x >= 0 && x < getWidth() && y >= 0 && y < getHeight();
     }
+
+    public Square topRightCorner() {
+        return board[0][getWidth()];
+    }
 }

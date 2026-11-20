@@ -53,6 +53,8 @@ public class Blinky extends Ghost {
      */
     private static final int MOVE_INTERVAL = 250;
 
+    private int movement = 12;
+
     /**
      * Creates a new "Blinky", a.k.a. "Shadow".
      *
@@ -84,17 +86,43 @@ public class Blinky extends Ghost {
 
         // TODO Blinky should patrol his corner every once in a while
         // TODO Implement his actual behaviour instead of simply chasing.
-        Unit nearest = Navigation.findNearest(Player.class, getSquare());
-        if (nearest == null) {
-            return Optional.empty();
-        }
-        assert nearest.hasSquare();
-        Square target = nearest.getSquare();
+        if (movement > 4) {
+            System.out.println("Chase Mode, movement: " + movement);
+            decrementMovement();
 
-        List<Direction> path = Navigation.shortestPath(getSquare(), target, this);
-        if (path != null && !path.isEmpty()) {
-            return Optional.ofNullable(path.get(0));
+            Unit nearest = Navigation.findNearest(Player.class, getSquare());
+            if (nearest == null) {
+                return Optional.empty();
+            }
+            assert nearest.hasSquare();
+            Square target = nearest.getSquare();
+
+            List<Direction> path = Navigation.shortestPath(getSquare(), target, this);
+            if (path != null && !path.isEmpty()) {
+                return Optional.ofNullable(path.get(0));
+            }
+        }
+        else {
+            // Should implement BFS algorithm but this system seems to work, have to adjust and verify if he's working
+            System.out.println("Patrol Mode, movement: " + movement);
+            decrementMovement();
+
+            if (movement == 0) {
+                setMovement(12);
+            }
+
+            Optional<Direction> result =  Navigation.topRightPath(getSquare(), this);
+            System.out.println("Direction choisi: " + result);
+            return result;
         }
         return Optional.empty();
+    }
+
+    private void decrementMovement() {
+        this.movement--;
+    }
+
+    public void setMovement(int movement) {
+        this.movement = movement;
     }
 }

@@ -1,14 +1,8 @@
 package nl.tudelft.jpacman.npc.ghost;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import nl.tudelft.jpacman.board.Board;
-import nl.tudelft.jpacman.board.Direction;
-import nl.tudelft.jpacman.board.Square;
-import nl.tudelft.jpacman.board.Unit;
+import nl.tudelft.jpacman.board.*;
 
 /**
  * Navigation provides utility to navigate on {@link Square}s.
@@ -58,6 +52,22 @@ public final class Navigation {
             addNewTargets(traveller, targets, visited, node, square);
         }
         return null;
+    }
+
+    public static Optional<Direction> topRightPath(Square from, Unit unit) {
+        if (from.getSquareAt(Direction.NORTH).isAccessibleTo(unit)) {
+            return Optional.of(Direction.NORTH);
+        }
+
+        if (from.getSquareAt(Direction.EAST).isAccessibleTo(unit)) {
+            return Optional.of(Direction.EAST);
+        }
+
+        if (from.getSquareAt(Direction.WEST).isAccessibleTo(unit)) {
+            return Optional.of(Direction.WEST);
+        }
+
+        return Optional.empty();
     }
 
     private static void addNewTargets(Unit traveller, List<Node> targets,
