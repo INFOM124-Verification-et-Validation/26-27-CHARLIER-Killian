@@ -1,6 +1,7 @@
 package nl.tudelft.jpacman.npc.ghost;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import nl.tudelft.jpacman.board.*;
 
@@ -54,6 +55,41 @@ public final class Navigation {
         return null;
     }
 
+    public static Set<Square> reachableSquares(Square from, Unit unit) {
+        Set<Node> visited = new HashSet<>();
+        ArrayDeque<Node> queue = new ArrayDeque<>();
+        Node startingNode = new Node(null, from, null);
+
+        visited.add(startingNode);
+        queue.add(startingNode);
+
+        while(!queue.isEmpty()) {
+            Node currentNode = queue.pollFirst();
+
+            for (Direction direction : Direction.values()) {
+                if (!currentNode.getSquare().getSquareAt(direction).isAccessibleTo(unit))
+                    continue;
+
+                Node target = new Node(direction, currentNode.getSquare().getSquareAt(direction), currentNode);
+
+                if (!visited.contains(target)) {
+                    visited.add(target);
+                    queue.add(target);
+                }
+            }
+        }
+        return visited.stream()
+            .map(Node::getSquare)
+            .collect(Collectors.toSet());
+    }
+
+    /**
+     * This function only checks if the square up is available, if not the square right, if not the square left.
+     *
+     * @param from The starting square.
+     * @param unit The current unit who wants to move.
+     * @return The Direction, in any, found.
+     */
     public static Optional<Direction> topRightPath(Square from, Unit unit) {
         if (from.getSquareAt(Direction.NORTH).isAccessibleTo(unit)) {
             return Optional.of(Direction.NORTH);
@@ -241,6 +277,19 @@ public final class Navigation {
             List<Direction> path = parent.getPath();
             path.add(getDirection());
             return path;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Node))
+                return false;
+
+            return this.getSquare().equals(((Node) o).getSquare());
+        }
+
+        @Override
+        public int hashCode() {
+            return square.hashCode();
         }
     }
 }
