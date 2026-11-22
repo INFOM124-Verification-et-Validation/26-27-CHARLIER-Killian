@@ -15,6 +15,10 @@ public final class Navigation {
     private Navigation() {
     }
 
+    /*private Comparator<Node> cornerOrder = Comparator
+        .comparingInt(Node::getY)
+        .thenComparingInt(node -> -node.getX());*/
+
     /**
      * Calculates the shortest path. This is done by BFS. This search ensures
      * the traveller is allowed to occupy the squares on the way, or returns the
@@ -55,7 +59,13 @@ public final class Navigation {
         return null;
     }
 
-    public static Set<Square> reachableSquares(Square from, Unit unit) {
+    /**
+     *
+     * @param from
+     * @param unit
+     * @return
+     */
+    public static Set<Node> reachableNodes(Square from, Unit unit) {
         Set<Node> visited = new HashSet<>();
         ArrayDeque<Node> queue = new ArrayDeque<>();
         Node startingNode = new Node(null, from, null);
@@ -78,9 +88,9 @@ public final class Navigation {
                 }
             }
         }
-        return visited.stream()
+        return visited/*.stream()
             .map(Node::getSquare)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toSet())*/;
     }
 
     /**
@@ -90,20 +100,15 @@ public final class Navigation {
      * @param unit The current unit who wants to move.
      * @return The Direction, in any, found.
      */
-    public static Optional<Direction> topRightPath(Square from, Unit unit) {
-        if (from.getSquareAt(Direction.NORTH).isAccessibleTo(unit)) {
-            return Optional.of(Direction.NORTH);
-        }
+    public static Optional<Square> topRightCorner(Square from, Unit unit) {
+        Set<Node> visited = reachableNodes(from, unit);
+        Comparator<Node> cornerOrder = Comparator
+            .comparingInt(Node::getY)
+            .thenComparingInt(node -> -node.getX());
 
-        if (from.getSquareAt(Direction.EAST).isAccessibleTo(unit)) {
-            return Optional.of(Direction.EAST);
-        }
-
-        if (from.getSquareAt(Direction.WEST).isAccessibleTo(unit)) {
-            return Optional.of(Direction.WEST);
-        }
-
-        return Optional.empty();
+        return visited.stream()
+            .min(cornerOrder)
+            .map(node -> node.getSquare());
     }
 
     private static void addNewTargets(Unit traveller, List<Node> targets,
@@ -277,6 +282,22 @@ public final class Navigation {
             List<Direction> path = parent.getPath();
             path.add(getDirection());
             return path;
+        }
+
+        private int getX() {
+            int sum = 0;
+            for (Direction direction : getPath()) {
+                sum += direction.getDeltaX();
+            }
+            return sum;
+        }
+
+        private int getY() {
+            int sum = 0;
+            for (Direction direction : getPath()) {
+                sum += direction.getDeltaY();
+            }
+            return sum;
         }
 
         @Override

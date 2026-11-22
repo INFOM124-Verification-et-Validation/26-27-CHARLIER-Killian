@@ -53,7 +53,7 @@ public class Blinky extends Ghost {
      */
     private static final int MOVE_INTERVAL = 250;
 
-    private int movement = 12;
+    private int movement = 24;
 
     /**
      * Creates a new "Blinky", a.k.a. "Shadow".
@@ -86,7 +86,7 @@ public class Blinky extends Ghost {
 
         // TODO Blinky should patrol his corner every once in a while
         // TODO Implement his actual behaviour instead of simply chasing.
-        if (movement > 4) {
+        if (movement > 8) {
             System.out.println("Chase Mode, movement: " + movement);
             decrementMovement();
 
@@ -99,21 +99,27 @@ public class Blinky extends Ghost {
 
             List<Direction> path = Navigation.shortestPath(getSquare(), target, this);
             if (path != null && !path.isEmpty()) {
+                System.out.println(Optional.ofNullable(path.get(0)));
                 return Optional.ofNullable(path.get(0));
             }
         }
         else {
-            // Should implement BFS algorithm but this system seems to work, have to adjust and verify if he's working
             System.out.println("Patrol Mode, movement: " + movement);
             decrementMovement();
 
             if (movement == 0) {
-                setMovement(12);
+                setMovement(24);
             }
 
-            Optional<Direction> result =  Navigation.topRightPath(getSquare(), this);
-            System.out.println("Direction choisi: " + result);
-            return result;
+            Optional<Square> result =  Navigation.topRightCorner(getSquare(), this);
+            if (result.isEmpty())
+                return Optional.empty();
+            List<Direction> path = Navigation.shortestPath(getSquare(), result.get(), this);
+            System.out.println(path);
+            if (path != null && !path.isEmpty()) {
+                System.out.println(Optional.ofNullable(path.get(0)));
+                return Optional.ofNullable(path.get(0));
+            }
         }
         return Optional.empty();
     }
