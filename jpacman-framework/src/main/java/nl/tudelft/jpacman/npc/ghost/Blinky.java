@@ -84,10 +84,7 @@ public class Blinky extends Ghost {
     public Optional<Direction> nextAiMove() {
         assert hasSquare();
 
-        // TODO Blinky should patrol his corner every once in a while
-        // TODO Implement his actual behaviour instead of simply chasing.
         if (movement > 8) {
-            System.out.println("Chase Mode, movement: " + movement);
             decrementMovement();
 
             Unit nearest = Navigation.findNearest(Player.class, getSquare());
@@ -99,12 +96,10 @@ public class Blinky extends Ghost {
 
             List<Direction> path = Navigation.shortestPath(getSquare(), target, this);
             if (path != null && !path.isEmpty()) {
-                System.out.println(Optional.ofNullable(path.get(0)));
                 return Optional.ofNullable(path.get(0));
             }
         }
         else {
-            System.out.println("Patrol Mode, movement: " + movement);
             decrementMovement();
 
             if (movement == 0) {
@@ -115,9 +110,7 @@ public class Blinky extends Ghost {
             if (result.isEmpty())
                 return Optional.empty();
             List<Direction> path = Navigation.shortestPath(getSquare(), result.get(), this);
-            System.out.println(path);
             if (path != null && !path.isEmpty()) {
-                System.out.println(Optional.ofNullable(path.get(0)));
                 return Optional.ofNullable(path.get(0));
             }
         }
