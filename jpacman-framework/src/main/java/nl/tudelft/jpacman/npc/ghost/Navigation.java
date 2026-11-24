@@ -1,7 +1,6 @@
 package nl.tudelft.jpacman.npc.ghost;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import nl.tudelft.jpacman.board.*;
 
@@ -14,10 +13,6 @@ public final class Navigation {
 
     private Navigation() {
     }
-
-    /*private Comparator<Node> cornerOrder = Comparator
-        .comparingInt(Node::getY)
-        .thenComparingInt(node -> -node.getX());*/
 
     /**
      * Calculates the shortest path. This is done by BFS. This search ensures
@@ -88,10 +83,7 @@ public final class Navigation {
                 }
             }
         }
-        System.out.println(visited);
-        return visited/*.stream()
-            .map(Node::getSquare)
-            .collect(Collectors.toSet())*/;
+        return visited;
     }
 
     /**
@@ -109,7 +101,7 @@ public final class Navigation {
 
         return visited.stream()
             .min(cornerOrder)
-            .map(node -> node.getSquare());
+            .map(Node::getSquare);
     }
 
     private static void addNewTargets(Unit traveller, List<Node> targets,

@@ -111,7 +111,6 @@ public class Blinky extends Ghost {
 
             List<Direction> directionToGo = Navigation.shortestPath(getSquare(), topRightSquare.get(), this);
             if (directionToGo != null && !directionToGo.isEmpty()) {
-                System.out.println(directionToGo);
                 return Optional.ofNullable(directionToGo.get(0));
             }
         }

@@ -172,6 +172,6 @@ public class BlinkyTest {
 
         Optional<Direction> aiDirection = blinky.nextAiMove();
 
-        assertThat(aiDirection.get()).isEqualTo(Direction.NORTH);
+        assertThat(aiDirection.get()).isIn(Direction.NORTH);
     }
 }
