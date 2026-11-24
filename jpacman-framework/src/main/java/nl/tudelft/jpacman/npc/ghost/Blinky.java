@@ -53,7 +53,7 @@ public class Blinky extends Ghost {
      */
     private static final int MOVE_INTERVAL = 250;
 
-    private int movement = 24;
+    private int movement = 12;
     private Optional<Square> topRightSquare = null;
 
     /**
@@ -85,7 +85,7 @@ public class Blinky extends Ghost {
     public Optional<Direction> nextAiMove() {
         assert hasSquare();
 
-        if (movement > 12) {
+        if (movement > 4) {
             decrementMovement();
 
             Unit nearest = Navigation.findNearest(Player.class, getSquare());
@@ -104,7 +104,7 @@ public class Blinky extends Ghost {
             decrementMovement();
 
             if (movement == 0) {
-                setMovement(24);
+                setMovement(12);
             }
             if (topRightSquare == null)
                 topRightSquare = Navigation.topRightCorner(getSquare(), this);
