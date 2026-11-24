@@ -54,6 +54,7 @@ public class Blinky extends Ghost {
     private static final int MOVE_INTERVAL = 250;
 
     private int movement = 24;
+    private Optional<Square> topRightSquare = null;
 
     /**
      * Creates a new "Blinky", a.k.a. "Shadow".
@@ -84,7 +85,7 @@ public class Blinky extends Ghost {
     public Optional<Direction> nextAiMove() {
         assert hasSquare();
 
-        if (movement > 8) {
+        if (movement > 12) {
             decrementMovement();
 
             Unit nearest = Navigation.findNearest(Player.class, getSquare());
@@ -105,13 +106,13 @@ public class Blinky extends Ghost {
             if (movement == 0) {
                 setMovement(24);
             }
+            if (topRightSquare == null)
+                topRightSquare = Navigation.topRightCorner(getSquare(), this);
 
-            Optional<Square> result =  Navigation.topRightCorner(getSquare(), this);
-            if (result.isEmpty())
-                return Optional.empty();
-            List<Direction> path = Navigation.shortestPath(getSquare(), result.get(), this);
-            if (path != null && !path.isEmpty()) {
-                return Optional.ofNullable(path.get(0));
+            List<Direction> directionToGo = Navigation.shortestPath(getSquare(), topRightSquare.get(), this);
+            if (directionToGo != null && !directionToGo.isEmpty()) {
+                System.out.println(directionToGo);
+                return Optional.ofNullable(directionToGo.get(0));
             }
         }
         return Optional.empty();

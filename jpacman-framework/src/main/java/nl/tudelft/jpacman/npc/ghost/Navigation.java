@@ -88,6 +88,7 @@ public final class Navigation {
                 }
             }
         }
+        System.out.println(visited);
         return visited/*.stream()
             .map(Node::getSquare)
             .collect(Collectors.toSet())*/;
@@ -211,7 +212,7 @@ public final class Navigation {
      *
      * @author Jeroen Roosen
      */
-    private static final class Node {
+    public static final class Node {
 
         /**
          * The direction for this node, which is <code>null</code> for the root
