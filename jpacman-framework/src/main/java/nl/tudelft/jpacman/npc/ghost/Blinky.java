@@ -54,7 +54,7 @@ public class Blinky extends Ghost {
     private static final int MOVE_INTERVAL = 250;
 
     private int movement = 12;
-    private Optional<Square> topRightSquare = null;
+    private Optional<Square> topRightSquare = Optional.empty();
 
     /**
      * Creates a new "Blinky", a.k.a. "Shadow".
@@ -106,7 +106,7 @@ public class Blinky extends Ghost {
             if (movement == 0) {
                 setMovement(12);
             }
-            if (topRightSquare == null)
+            if (topRightSquare.isEmpty())
                 topRightSquare = Navigation.topRightCorner(getSquare(), this);
 
             List<Direction> directionToGo = Navigation.shortestPath(getSquare(), topRightSquare.get(), this);
