@@ -1,14 +1,8 @@
 package nl.tudelft.jpacman.npc.ghost;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import nl.tudelft.jpacman.board.Board;
-import nl.tudelft.jpacman.board.Direction;
-import nl.tudelft.jpacman.board.Square;
-import nl.tudelft.jpacman.board.Unit;
+import nl.tudelft.jpacman.board.*;
 
 /**
  * Navigation provides utility to navigate on {@link Square}s.
@@ -58,6 +52,56 @@ public final class Navigation {
             addNewTargets(traveller, targets, visited, node, square);
         }
         return null;
+    }
+
+    /**
+     *
+     * @param from
+     * @param unit
+     * @return
+     */
+    public static Set<Node> reachableNodes(Square from, Unit unit) {
+        Set<Node> visited = new HashSet<>();
+        ArrayDeque<Node> queue = new ArrayDeque<>();
+        Node startingNode = new Node(null, from, null);
+
+        visited.add(startingNode);
+        queue.add(startingNode);
+
+        while(!queue.isEmpty()) {
+            Node currentNode = queue.pollFirst();
+
+            for (Direction direction : Direction.values()) {
+                if (!currentNode.getSquare().getSquareAt(direction).isAccessibleTo(unit))
+                    continue;
+
+                Node target = new Node(direction, currentNode.getSquare().getSquareAt(direction), currentNode);
+
+                if (!visited.contains(target)) {
+                    visited.add(target);
+                    queue.add(target);
+                }
+            }
+        }
+        return visited;
+    }
+
+    /**
+     * This function only checks if the square up is available, if not the square right, if not the square left.
+     *
+     * @param from The starting square.
+     * @param unit The current unit who wants to move.
+     * @return The Direction, in any, found.
+     */
+    public static Optional<Square> topRightCorner(Square from, Unit unit) {
+        Set<Node> visited = reachableNodes(from, unit);
+        Comparator<Node> cornerOrder = Comparator
+            .comparingInt(Node::getY)
+            .thenComparingInt(node -> -node.getX());
+
+        return visited.stream()
+            .min(cornerOrder)
+            .map(Node::getSquare);
     }
 
     private static void addNewTargets(Unit traveller, List<Node> targets,
@@ -160,7 +204,7 @@ public final class Navigation {
      *
      * @author Jeroen Roosen
      */
-    private static final class Node {
+    public static final class Node {
 
         /**
          * The direction for this node, which is <code>null</code> for the root
@@ -231,6 +275,35 @@ public final class Navigation {
             List<Direction> path = parent.getPath();
             path.add(getDirection());
             return path;
+        }
+
+        private int getX() {
+            int sum = 0;
+            for (Direction direction : getPath()) {
+                sum += direction.getDeltaX();
+            }
+            return sum;
+        }
+
+        private int getY() {
+            int sum = 0;
+            for (Direction direction : getPath()) {
+                sum += direction.getDeltaY();
+            }
+            return sum;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Node))
+                return false;
+
+            return this.getSquare().equals(((Node) o).getSquare());
+        }
+
+        @Override
+        public int hashCode() {
+            return square.hashCode();
         }
     }
 }

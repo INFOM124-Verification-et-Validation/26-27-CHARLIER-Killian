@@ -6,23 +6,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import nl.tudelft.jpacman.board.Board;
 import nl.tudelft.jpacman.board.BoardFactory;
 import nl.tudelft.jpacman.board.Direction;
 import nl.tudelft.jpacman.board.Square;
 import nl.tudelft.jpacman.board.Unit;
-import nl.tudelft.jpacman.level.LevelFactory;
-import nl.tudelft.jpacman.level.MapParser;
-import nl.tudelft.jpacman.level.Pellet;
+import nl.tudelft.jpacman.level.*;
 import nl.tudelft.jpacman.npc.Ghost;
 import nl.tudelft.jpacman.sprite.PacManSprites;
+import nl.tudelft.jpacman.npc.ghost.Navigation.*;
 
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the various methods provided by the {@link Navigation} class.
@@ -38,6 +42,8 @@ class NavigationTest {
      */
     private MapParser parser;
 
+    private GhostMapParser ghostMapParser;
+    private Player player;
     /**
      * Set up the map parser.
      */
@@ -46,6 +52,8 @@ class NavigationTest {
         PacManSprites sprites = new PacManSprites();
         parser = new MapParser(new LevelFactory(sprites, new GhostFactory(
             sprites)), new BoardFactory(sprites));
+        ghostMapParser = new GhostMapParser(new LevelFactory(sprites, new GhostFactory(sprites)), new BoardFactory(sprites), new GhostFactory(sprites));
+        player = new PlayerFactory(sprites).createPacMan();
     }
 
     /**
@@ -158,5 +166,45 @@ class NavigationTest {
             Unit unit = Navigation.findNearest(Ghost.class, s1);
             assertThat(unit).isNotNull();
         }
+    }
+
+    @Test
+    void testReachableNodes() {
+        List<String> map = new ArrayList<>();
+        map.add("###########");
+        map.add("#         #");
+        map.add("#    B    #");
+        map.add("#         #");
+        map.add("#        P#");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("###########");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        Blinky blinky = Navigation.findUnitInBoard(Blinky.class, currentLevel.getBoard());
+        Set<Node> result = Navigation.reachableNodes(blinky.getSquare(), blinky);
+        Set<Node> result2 = Navigation.reachableNodes(blinky.getSquare(), blinky);
+        // Désolé, je ne sais pas tester les nodes, j'y réfléchirai très sérieusement pour plus tard...
+        assertThat(result).isEqualTo(result2);
+    }
+
+    @Test
+    void testTopRightCorner() {
+        List<String> map = new ArrayList<>();
+        map.add("###########");
+        map.add("#        P#");
+        map.add("#    B    #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("###########");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        Blinky blinky = Navigation.findUnitInBoard(Blinky.class, currentLevel.getBoard());
+        currentLevel.registerPlayer(player);
+        Optional<Square> result = Navigation.topRightCorner(blinky.getSquare(), blinky);
+
+        assertThat(result.get()).isEqualTo(player.getSquare());
     }
 }

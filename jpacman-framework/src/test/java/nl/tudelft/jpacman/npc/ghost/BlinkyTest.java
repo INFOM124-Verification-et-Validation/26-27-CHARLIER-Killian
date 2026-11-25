@@ -152,4 +152,67 @@ public class BlinkyTest {
 
         assertThat(aiDirection.isEmpty()).isTrue();
     }
+
+    @Test
+    public void testBlinkyChaseMode() {
+        List<String> map = new ArrayList<>();
+        map.add("###########");
+        map.add("#        P#");
+        map.add("#    B    #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("###########");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        currentLevel.registerPlayer(player);
+        Blinky blinky = Navigation.findUnitInBoard(Blinky.class, currentLevel.getBoard());
+        blinky.setMovement(4);
+
+        Optional<Direction> aiDirection = blinky.nextAiMove();
+
+        assertThat(aiDirection.get()).isIn(Direction.NORTH);
+    }
+
+    @Test
+    public void testBlinkyWithoutPlayer() {
+        List<String> map = new ArrayList<>();
+        map.add("###########");
+        map.add("#         #");
+        map.add("#    B    #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("###########");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        Blinky blinky = Navigation.findUnitInBoard(Blinky.class, currentLevel.getBoard());
+
+        Optional<Direction> aiDirection = blinky.nextAiMove();
+
+        assertThat(aiDirection.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void testBlinkyPathStuck() {
+        List<String> map = new ArrayList<>();
+        map.add("###########");
+        map.add("#    #   P#");
+        map.add("#   #B#   #");
+        map.add("#    #    #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("#         #");
+        map.add("###########");
+
+        Level currentLevel = ghostMapParser.parseMap(map);
+        currentLevel.registerPlayer(player);
+        Blinky blinky = Navigation.findUnitInBoard(Blinky.class, currentLevel.getBoard());
+
+        Optional<Direction> aiDirection = blinky.nextAiMove();
+
+        assertThat(aiDirection.isEmpty()).isTrue();
+    }
 }

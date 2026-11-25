@@ -53,6 +53,9 @@ public class Blinky extends Ghost {
      */
     private static final int MOVE_INTERVAL = 250;
 
+    private int movement = 12;
+    private Optional<Square> topRightSquare = Optional.empty();
+
     /**
      * Creates a new "Blinky", a.k.a. "Shadow".
      *
@@ -82,19 +85,43 @@ public class Blinky extends Ghost {
     public Optional<Direction> nextAiMove() {
         assert hasSquare();
 
-        // TODO Blinky should patrol his corner every once in a while
-        // TODO Implement his actual behaviour instead of simply chasing.
-        Unit nearest = Navigation.findNearest(Player.class, getSquare());
-        if (nearest == null) {
-            return Optional.empty();
-        }
-        assert nearest.hasSquare();
-        Square target = nearest.getSquare();
+        if (movement > 4) {
+            decrementMovement();
 
-        List<Direction> path = Navigation.shortestPath(getSquare(), target, this);
-        if (path != null && !path.isEmpty()) {
-            return Optional.ofNullable(path.get(0));
+            Unit nearest = Navigation.findNearest(Player.class, getSquare());
+            if (nearest == null) {
+                return Optional.empty();
+            }
+            assert nearest.hasSquare();
+            Square target = nearest.getSquare();
+
+            List<Direction> path = Navigation.shortestPath(getSquare(), target, this);
+            if (path != null && !path.isEmpty()) {
+                return Optional.ofNullable(path.get(0));
+            }
+        }
+        else {
+            decrementMovement();
+
+            if (movement == 0) {
+                setMovement(12);
+            }
+            if (topRightSquare.isEmpty())
+                topRightSquare = Navigation.topRightCorner(getSquare(), this);
+
+            List<Direction> directionToGo = Navigation.shortestPath(getSquare(), topRightSquare.get(), this);
+            if (directionToGo != null && !directionToGo.isEmpty()) {
+                return Optional.ofNullable(directionToGo.get(0));
+            }
         }
         return Optional.empty();
+    }
+
+    private void decrementMovement() {
+        this.movement--;
+    }
+
+    public void setMovement(int movement) {
+        this.movement = movement;
     }
 }
